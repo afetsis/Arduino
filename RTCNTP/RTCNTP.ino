@@ -4,20 +4,20 @@
 #include "Time.h"
 #include "SPI.h"
 
-#define DS1302_GND_PIN 37			// DS1302 GND pin
-#define DS1302_VCC_PIN 39			// DS1302 VCC pin
+#define DS1302_GND_PIN 37												// DS1302 GND pin
+#define DS1302_VCC_PIN 39												// DS1302 VCC pin
 
 void PrintTime();
 void SetupRTC();
-DS1302RTC RTC(31, 33, 35);				// set RTC pins (RST,DAT,CLK)
-time_t s = 0;
+DS1302RTC RTC(31, 33, 35);												// set RTC pins (RST,DAT,CLK)
+time_t s = 0;															// time_t type variable
 EthernetUDP Udp;
 
 
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-byte ip[] = {192,168,1,20};
+byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};						// set mac address
+byte ip[] = {192,168,1,20};												// set local ip
 unsigned int localPort = 8888;
-char timeServer[] = "time.windows.com";
+char timeServer[] = "time.windows.com";									// set remote timeserver
 const int NTP_PACKET_SIZE = 48;
 char packetBuffer[NTP_PACKET_SIZE];
 
@@ -25,7 +25,7 @@ char packetBuffer[NTP_PACKET_SIZE];
 
 void setup() {
 	Serial.begin(9600);
-	while(!Serial){;}
+	while(!Serial){;}													// wait for serial to initialize
 	Ethernet.begin(mac, ip);
 	Udp.begin(localPort);
 	Serial.println("waiting for sync");
@@ -33,19 +33,19 @@ void setup() {
 }
 
 void loop() {
-	//PrintTime();	
+	PrintTime();														// prints time only if it changes
 }
 
 
 
 void SetupRTC(){
-	digitalWrite(DS1302_GND_PIN, LOW);			//enable DS1302
+	digitalWrite(DS1302_GND_PIN, LOW);									//enable DS1302
 	pinMode(DS1302_GND_PIN, OUTPUT);
 	digitalWrite(DS1302_VCC_PIN, HIGH);
 	pinMode(DS1302_VCC_PIN, OUTPUT);
 	Serial.println("Time sync");
-	setSyncInterval(3600);
-	setSyncProvider(getNtpTime);		//get time from server
+	setSyncInterval(3600);												// interval to sync time
+	setSyncProvider(getNtpTime);										// get time from server
 	
 }
 
@@ -96,7 +96,7 @@ unsigned long sendNTPpacket(char *address){
 void PrintTime() {
 
 	if (now() != s) {
-		if (hour() < 10) {
+		if (hour() < 10) {												// adds a leading zero if its < 10
 			Serial.print("0");
 			Serial.print(hour());
 		}
